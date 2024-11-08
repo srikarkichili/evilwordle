@@ -91,18 +91,18 @@ class Keyboard:
         post: The `colors` dictionary is updated based on feedback, with each letter's color
               reflecting the most accurate feedback from the guesses so far.
         """
-        x = 0
-        for i in guessed_word:
-            x += 1
+        for i in range(len(guessed_word)):
+            letter = guessed_word[i]
             color = feedback_colors[i]
+            self.colors[letter] = color
             if color == CORRECT_COLOR:
-                self.colors[x] = CORRECT_COLOR
+                self.colors[letter] = CORRECT_COLOR
             elif color == WRONG_SPOT_COLOR:
-                if self.colors.get(x, NO_COLOR) != CORRECT_COLOR:
-                    self.colors[x] = WRONG_SPOT_COLOR
+                if self.colors.get(letter, NO_COLOR) != CORRECT_COLOR:
+                    self.colors[letter] = WRONG_SPOT_COLOR
             elif color == NOT_IN_WORD_COLOR:
-                if self.colors.get(x, NO_COLOR) not in [CORRECT_COLOR, WRONG_SPOT_COLOR]:
-                    self.colors[x] = NOT_IN_WORD_COLOR
+                if self.colors.get(letter, NO_COLOR) not in [CORRECT_COLOR, WRONG_SPOT_COLOR]:
+                    self.colors[letter] = NOT_IN_WORD_COLOR
 
     # TODO: Modify this method. You may delete this comment when you are done.
     def __str__(self):
@@ -176,13 +176,12 @@ class WordFamily:
         """
         self.feedback_colors = feedback_colors
         self.words = words
-        self.difficulty = self.calculate()
         # TODO: implement the difficulty calculation here.
-    def calculate(self):
-        x = 0
-        for i in self.feedback_colors:
-            x += self.COLOR_DIFFICULTY.get(i, 0)
-        return x
+    def difficulty(self):
+        correct = self.feedback_colors.count(CORRECT_COLOR)
+        wrong = self.feedback_colors.count(WRONG_SPOT_COLOR)
+        not = self.feedback_colors.count(NOT_IN_WORD_COLOR)
+        return (correct * 3) + (wrong * 2) + (not * 1)
 
     # TODO: Modify this method. You may delete this comment when you are done.
     def __lt__(self, other):
@@ -205,13 +204,9 @@ class WordFamily:
         post: Returns a boolean result of the comparison, raises NotImplementedError
               if `other` is not a WordFamily instance.
         """
-        if not isinstance(other, WordFamily):
-            raise NotImplementedError("< operator only valid for WordFamily comparisons.")
-        if len(self.words) != len(other.words):
-            return len(self.words) < len(other.words)
-        if self.difficulty != other.difficulty:
-            return self.difficulty < other.difficulty
-        return self.feedback_colors < other.feedback_colors
+        if self.difficulty() != other.difficulty():
+            return self.difficulty() < other.difficulty()
+        return len(self.words) < len(other.words)
 
     # DO NOT change this method.
     # You should use this for debugging!
