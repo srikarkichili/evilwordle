@@ -91,13 +91,18 @@ class Keyboard:
         post: The `colors` dictionary is updated based on feedback, with each letter's color
               reflecting the most accurate feedback from the guesses so far.
         """
-        for i in range(len(guessed_word)):
-            letter = guessed_word[i]
+        x = 0
+        for i in guessed_word:
+            x += 1
             color = feedback_colors[i]
             if color == CORRECT_COLOR:
-                self.colors[letter] = CORRECT_COLOR
-            elif color == WRONG_SPOT_COLOR and self.colors[letter] != CORRECT_COLOR:
-                self.colors[letter] = WRONG_SPOT_COLOR
+                self.colors[x] = CORRECT_COLOR
+            elif color == WRONG_SPOT_COLOR:
+                if self.colors.get(x, NO_COLOR) != CORRECT_COLOR:
+                    self.colors[x] = WRONG_SPOT_COLOR
+            elif color == NOT_IN_WORD_COLOR:
+                if self.colors.get(x, NO_COLOR) not in [CORRECT_COLOR, WRONG_SPOT_COLOR]:
+                    self.colors[x] = NOT_IN_WORD_COLOR
 
     # TODO: Modify this method. You may delete this comment when you are done.
     def __str__(self):
