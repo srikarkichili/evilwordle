@@ -274,7 +274,10 @@ def color_word(colors, word):
 
     colored_word = [None] * len(word)
     for i, character in enumerate(word):
-        colored_word[i] = f"{colors[i]}{character}{NO_COLOR}"
+        if character == ' ':
+            colored_word[i] = f"{colors[i]}{' '}{NO_COLOR}"
+        else:
+            colored_word[i] = f"{colors[i]}{character}{NO_COLOR}"
 
     return "".join(colored_word)
 
